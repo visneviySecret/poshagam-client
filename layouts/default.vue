@@ -1,12 +1,15 @@
 <template>
-  <div class="container">
-    <header>
-      <NavBar />
-      <RouterMenu />
-    </header>
-    <div>
-      <slot />
+  <div class="layout">
+    <div class="container">
+      <header>
+        <NavBar />
+        <RouterMenu />
+      </header>
+      <main>
+        <slot />
+      </main>
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -55,12 +58,20 @@ const loadUserOrderFromLocalStorage = async () => {
 </script>
 
 <style lang="scss" scoped>
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .container {
-  max-width: min(95%, 1280px);
-  margin-inline: auto;
+  flex: 1;
+  width: min(95%, 1280px);
   margin-bottom: 115px;
   color: #1f2432;
 }
+
 header {
   margin-bottom: 50px;
 }
