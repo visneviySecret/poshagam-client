@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <RouterLink to="/">
-      <img src="/images/logo.png" alt="logo" width="100" height="100" />
+      <img src="/images/logo.svg" alt="logo" width="200" />
     </RouterLink>
     <CartStatus />
     <UserMenu />
