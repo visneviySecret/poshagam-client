@@ -29,12 +29,11 @@ jobs:
             nvm alias default 20 &&
             cd /opt/poshagam-client &&
             git pull origin main &&
-            echo 'Node version:' &&
-            node -v &&
             npm uninstall unrs-resolver || true &&
             rm -rf node_modules .output/ &&
             npm install &&
             npm run build &&
+            npm install -g pm2 &&    
             pm2 restart ecosystem.client.config.js &&
-            echo 'Deployment complete'
+            echo '✅ Deployment complete'
           "
