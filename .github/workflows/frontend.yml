@@ -15,16 +15,21 @@ jobs:
           node-version: 20
           cache: "npm"
 
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
+      - name: Deploy to production
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: 194.34.239.189
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /opt/poshagam-client
-            git pull origin main
-            npm ci --production
-            rm -rf .output/
-            npm run build
-            pm2 restart ecosystem.client.config.js
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Execute deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} "
+            cd /opt/poshagam-client &&
+            git pull origin main &&
+            echo 'Node version:' &&
+            node -v &&
+            npm uninstall unrs-resolver || true &&
+            rm -rf node_modules package-lock.json .output/ &&
+            npm ci --production &&
+            npm run build &&
+            pm2 restart ecosystem.client.config.js &&
+            echo 'Deployment complete'
+          "
