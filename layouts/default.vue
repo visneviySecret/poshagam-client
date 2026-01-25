@@ -18,7 +18,13 @@ import { getUserMe } from "~/api/user";
 import { getMyOrder } from "~/api/order";
 import { useStore } from "vuex";
 import { loadCartFromLocalStorage } from "~/utils/cartLocalStorage";
-console.log("API_URL:", config.public.apiUrl);
+console.log(
+  "API_URL import.meta.env.VITE_API_URL:",
+  import.meta.env.VITE_API_URL
+);
+
+const config = useRuntimeConfig();
+console.log("API_URL config.public.apiUrl:", config.public.apiUrl);
 const store = useStore();
 const auth = useCookie(import.meta.env.VITE_REFRESH_TOKEN);
 
@@ -62,12 +68,11 @@ const loadUserOrderFromLocalStorage = async () => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .container {
-  flex: 1;
-  width: min(95%, 1280px);
+  max-width: min(95%, 1280px);
+  margin-inline: auto;
   margin-bottom: 115px;
   color: #1f2432;
 }
