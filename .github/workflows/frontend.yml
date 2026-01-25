@@ -22,6 +22,8 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "Connected!" && whoami
+            cd /opt/poshagam-client && pwd
             cd /opt/poshagam-client
             git pull origin main
             npm ci --production
