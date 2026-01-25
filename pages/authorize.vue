@@ -1,5 +1,8 @@
 <template>
   <div class="auth">
+    <button type="button" class="auth-button-back" @click="navigateTo('/')">
+      Вернуться в магазин
+    </button>
     <div class="auth-card">
       <div class="auth-tabs">
         <button
@@ -120,6 +123,7 @@ const onSubmit = async () => {
   align-items: center;
   justify-content: center;
   background: #f5f6fa;
+  position: relative;
 }
 .auth-card {
   width: 100%;
@@ -211,6 +215,29 @@ const onSubmit = async () => {
   background: #1d4ed8;
 }
 .auth-button:active {
+  transform: translateY(1px);
+}
+.auth-button-back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    transform 0.05s ease;
+  z-index: 10;
+}
+.auth-button-back:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+.auth-button-back:active {
   transform: translateY(1px);
 }
 </style>
