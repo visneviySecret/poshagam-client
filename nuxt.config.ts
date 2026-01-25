@@ -1,4 +1,9 @@
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.VITE_API_URL || "https://poshagam.store/api",
+    },
+  },
   css: ["~/assets/styles/main.scss"],
   app: {
     head: {
