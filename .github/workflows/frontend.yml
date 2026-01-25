@@ -16,7 +16,7 @@ jobs:
           cache: "npm"
 
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.1.0
+        uses: appleboy/ssh-action@master
         with:
           host: 194.34.239.189
           username: root
