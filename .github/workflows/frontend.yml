@@ -22,8 +22,8 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            whoami && pwd && ls -la /opt/poshagam-client
-            echo "Connected!" && whoami
+            echo "Testing SSH..."  
+            whoami || echo "Auth failed"
             cd /opt/poshagam-client && pwd
             cd /opt/poshagam-client
             git pull origin main
