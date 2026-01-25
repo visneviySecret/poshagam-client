@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   css: ["~/assets/styles/main.scss"],
   app: {
     head: {
-      title: "Ваша корзина",
+      title: "По шагам",
       meta: [{ name: "description", content: "Управляй своей корзиной" }],
       script: [
         {
