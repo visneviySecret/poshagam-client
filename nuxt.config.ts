@@ -3,7 +3,12 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: "По шагам",
-      meta: [{ name: "description", content: "Управляй своей корзиной" }],
+      meta: [
+        {
+          name: "description",
+          content: "Магазин инструкций для конструкторов",
+        },
+      ],
       script: [
         {
           src: "https://auth.robokassa.ru/Merchant/bundle/robokassa_iframe.js",
