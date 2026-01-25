@@ -18,7 +18,7 @@ import { getUserMe } from "~/api/user";
 import { getMyOrder } from "~/api/order";
 import { useStore } from "vuex";
 import { loadCartFromLocalStorage } from "~/utils/cartLocalStorage";
-
+console.log("API_URL:", import.meta.env.VITE_API_URL);
 const store = useStore();
 const auth = useCookie(import.meta.env.VITE_REFRESH_TOKEN);
 
