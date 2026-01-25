@@ -1,0 +1,30 @@
+name: Deploy Frontend
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 194.34.239.189
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/poshagam-client
+            git pull origin main
+            npm ci --production
+            rm -rf .output/
+            npm run build
+            pm2 restart ecosystem.client.config.js
