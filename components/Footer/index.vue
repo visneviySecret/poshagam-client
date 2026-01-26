@@ -47,7 +47,9 @@
         <h4 class="footer-title">Контакты</h4>
         <ul class="footer-links">
           <li>
-            <a href="mailto:info@poshagam.store">info@poshagam.store</a>
+            <a href="mailto:poshagam.store@gmail.com"
+              >poshagam.store@gmail.com</a
+            >
           </li>
         </ul>
       </div>
