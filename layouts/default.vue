@@ -20,20 +20,19 @@ import { useStore } from "vuex";
 import { loadCartFromLocalStorage } from "~/utils/cartLocalStorage";
 
 const store = useStore();
-const auth = useCookie(import.meta.env.VITE_REFRESH_TOKEN);
 
 onMounted(async () => {
-  if (auth.value && !store.getters.user?.id) {
-    await loadUserOrderFromServer();
-  } else if (!auth.value) {
-    await loadUserOrderFromLocalStorage();
-  }
-});
-const loadUserOrderFromServer = async () => {
   try {
     const userData = await getUserMe();
     store.dispatch("setUser", userData);
+    await loadUserOrderFromServer();
+  } catch {
+    await loadUserOrderFromLocalStorage();
+  }
+});
 
+const loadUserOrderFromServer = async () => {
+  try {
     const userOrder = await getMyOrder();
     userOrder?.items.forEach((item) => {
       store.commit("addProductToCart", item);

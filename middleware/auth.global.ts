@@ -1,10 +1,9 @@
-export default defineNuxtRouteMiddleware((to) => {
-  const auth = useCookie<string | undefined>(
-    import.meta.env.VITE_REFRESH_TOKEN as string
-  );
+import { useStore } from "vuex";
 
+export default defineNuxtRouteMiddleware((to) => {
   if (to.path === "/authorize") {
-    if (auth.value) {
+    const store = useStore();
+    if (store.getters.isAuthenticated) {
       return navigateTo("/");
     }
     return;

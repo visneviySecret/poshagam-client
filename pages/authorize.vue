@@ -77,10 +77,6 @@ const passwordRepeat = ref("");
 const error = ref("");
 const loading = ref(false);
 
-const auth = useCookie<string | undefined>(
-  import.meta.env.VITE_REFRESH_TOKEN as string
-);
-
 const onSubmit = async () => {
   error.value = "";
 
@@ -102,11 +98,9 @@ const onSubmit = async () => {
 
   try {
     loading.value = true;
-    const response =
-      mode.value === "login"
-        ? await login(email.value, password.value)
-        : await signup(email.value, password.value);
-    auth.value = response.tokens.refreshToken;
+    await (mode.value === "login"
+      ? login(email.value, password.value)
+      : signup(email.value, password.value));
     navigateTo("/");
   } catch (err) {
     error.value = (err as Error).message;

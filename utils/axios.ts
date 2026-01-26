@@ -34,13 +34,8 @@ apiClient.interceptors.response.use(
       const originalRequest = error.config;
       if (error.response.status === 401 && !originalRequest?._isRetry) {
         originalRequest._isRetry = true;
-        const auth = useCookie<string | undefined>(
-          import.meta.env.VITE_REFRESH_TOKEN as string
-        );
-        auth.value = undefined;
         try {
-          const response = await refreshToken();
-          auth.value = response.tokens.refreshToken;
+          await refreshToken();
           return apiClient.request(error.config);
         } catch (err) {
           // TODO это поведение по переадресации на авторизацию всегда вызывается,

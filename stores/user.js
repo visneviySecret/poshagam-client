@@ -20,6 +20,9 @@ export default {
     userAddresses(state) {
       return state.addresses;
     },
+    isAuthenticated(state) {
+      return !!state.id;
+    },
   },
   actions: {
     setUser({ commit }, userData) {
