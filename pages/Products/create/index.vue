@@ -1,6 +1,8 @@
 <template>
   <div class="page">
-    <h1>Новый товар</h1>
+    <div class="page-header">
+      <h1>Новый товар</h1>
+    </div>
     <form class="form" @submit.prevent="handleSubmit">
       <label class="field">
         <span>Название</span>
@@ -122,9 +124,17 @@ const handleSubmit = async () => {
   margin: 0 auto;
   padding: 24px;
 }
-h1 {
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
+
+h1 {
+  margin: 0;
+}
+
 .form {
   display: flex;
   flex-direction: column;

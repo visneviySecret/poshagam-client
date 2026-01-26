@@ -13,9 +13,9 @@
           v-if="isAdmin"
           type="button"
           class="user-item"
-          @click.stop="createProduct"
+          @click.stop="goToProducts"
         >
-          Добавить товар
+          Мои товары
         </button>
         <LogoutButton class="user-item user-item--logout" />
       </template>
@@ -53,9 +53,9 @@ const openSettings = () => {
   navigateTo("/settings");
 };
 
-const createProduct = () => {
+const goToProducts = () => {
   isOpen.value = false;
-  navigateTo("/create-product");
+  navigateTo("/products");
 };
 
 const goToAuth = () => {

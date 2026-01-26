@@ -10,4 +10,9 @@ async function createProduct(payload: CreateProductPayload) {
   return response.data;
 }
 
-export { getProducts, createProduct };
+async function getOwnerProducts(): Promise<Product[]> {
+  const response = await apiClient.get("/products/owner");
+  return response.data;
+}
+
+export { getProducts, createProduct, getOwnerProducts };
