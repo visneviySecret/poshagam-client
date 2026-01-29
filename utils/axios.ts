@@ -23,33 +23,6 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    if (response.data && typeof response.data === "object") {
-      const normalizeUrl = (url: string | undefined | null): string => {
-        if (!url || typeof url !== "string") return url || "";
-        if (url.startsWith("http://poshagam.store:9000")) {
-          return url.replace("http://", "//");
-        }
-        return url;
-      };
-
-      const normalizeProduct = (product: any) => {
-        if (product.images && Array.isArray(product.images)) {
-          product.images = product.images.map(normalizeUrl);
-        }
-        if (product.preview) {
-          product.preview = normalizeUrl(product.preview);
-        }
-        return product;
-      };
-
-      if (Array.isArray(response.data)) {
-        response.data = response.data.map((item) =>
-          item.images || item.preview ? normalizeProduct(item) : item
-        );
-      } else if (response.data.images || response.data.preview) {
-        response.data = normalizeProduct(response.data);
-      }
-    }
     return response;
   },
   async (error) => {
