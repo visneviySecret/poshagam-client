@@ -36,9 +36,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-
+import { computed, ref, watch } from "vue";
 import { useStore } from "vuex";
+import { loadToCache } from "~/utils/toCache";
 
 const props = defineProps<{
   product: Product;
@@ -46,6 +46,8 @@ const props = defineProps<{
 
 const store = useStore();
 const isHovered = ref(false);
+const cachedGifUrl = ref<string | null>(null);
+const cachedImageUrl = ref<string | null>(null);
 
 const storedProduct = computed(() => {
   return store.getters.allCart.find(
@@ -70,10 +72,36 @@ const formattedPrice = computed(() =>
 );
 
 const currentImage = computed(() => {
-  if (isHovered.value && props.product.preview) {
-    return props.product.preview;
+  if (isHovered.value && cachedGifUrl.value) {
+    return cachedGifUrl.value;
   }
-  return props.product.images[0];
+  return cachedImageUrl.value || props.product.images[0];
+});
+
+watch(
+  () => props.product.preview,
+  async (previewUrl) => {
+    if (previewUrl) {
+      cachedGifUrl.value = await loadToCache(previewUrl);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.product.images[0],
+  async (imageUrl) => {
+    if (imageUrl) {
+      cachedImageUrl.value = await loadToCache(imageUrl);
+    }
+  },
+  { immediate: true }
+);
+
+watch(isHovered, async (hovered) => {
+  if (hovered && props.product.preview && !cachedGifUrl.value) {
+    cachedGifUrl.value = await loadToCache(props.product.preview);
+  }
 });
 </script>
 
