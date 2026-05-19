@@ -17,11 +17,13 @@
         <p>У вас пока нет товаров</p>
       </div>
       <div v-else>
-        <div class="products-grid">
-          <ProductCard
+        <div class="products-list">
+          <ProductRowCard
             v-for="product in products"
             :key="product.id"
             :product="product"
+            @edit="handleEdit"
+            @delete="handleDelete"
           />
         </div>
       </div>
@@ -30,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { getOwnerProducts } from "~/api/product";
-import ProductCard from "~/entities/ProductCard.vue";
+import { getOwnerProducts, deleteProduct } from "~/api/product";
+import ProductRowCard from "~/entities/ProductRowCard.vue";
 
 const products = ref<Product[]>([]);
 const error = ref<string | undefined>(undefined);
@@ -39,6 +41,19 @@ const loading = ref<boolean>(true);
 
 const goToCreateProduct = () => {
   navigateTo("/products/create");
+};
+
+const handleEdit = (product: Product) => {
+  navigateTo(`/products/edit/${product.id}`);
+};
+
+const handleDelete = async (productId: number) => {
+  try {
+    await deleteProduct(productId);
+    products.value = products.value.filter((p) => p.id !== productId);
+  } catch (err) {
+    error.value = (err as Error).message ?? "Ошибка удаления товара";
+  }
 };
 
 onMounted(async () => {
@@ -93,10 +108,10 @@ h1 {
   transform: translateY(1px);
 }
 
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+.products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .empty-products {
