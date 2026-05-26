@@ -9,7 +9,7 @@
     <div v-if="error" class="error-message">
       <p>{{ error }}</p>
     </div>
-    <div v-else-if="loading" class="loading-message">
+    <div v-if="loading" class="loading-message">
       <p>Загрузка...</p>
     </div>
     <div v-else>
@@ -63,6 +63,12 @@ onMounted(async () => {
     error.value = (err as Error).message ?? "Ошибка получения товаров";
   } finally {
     loading.value = false;
+  }
+});
+
+watch(error, (newValue) => {
+  if (newValue) {
+    setTimeout(() => (error.value = undefined), 5000);
   }
 });
 </script>
