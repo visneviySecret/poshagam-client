@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <img :src="product.images[0]" :alt="product.title" />
+    <img :src="imageSrc" :alt="productTitle" />
     <div class="content">
       <h3 class="content__title">
         {{ product.product_name || product.name }}
@@ -8,13 +8,13 @@
     </div>
     <span class="cost"
       >{{
-        getFormatNumber(product.price * (product.count || product.quantity))
+        getFormatNumber(product.price * itemCount)
       }}
       ₽</span
     >
     <div
       class="cross-wrapper"
-      @click="removeProductFromCart(product.product_id)"
+      @click="removeProductFromCart(productId)"
     >
       <CrossIcon />
     </div>
@@ -27,7 +27,30 @@ import { mapActions } from "vuex";
 import { getFormatNumber } from "@/utils/getFormatNumber";
 
 export default {
-  props: ["product"],
+  props: {
+    product: { type: Object, required: true },
+    count: { type: Number, default: 1 },
+  },
+  computed: {
+    itemCount() {
+      return this.count || this.product.count || this.product.quantity || 1;
+    },
+    productId() {
+      return this.product.product_id ?? this.product.id;
+    },
+    productTitle() {
+      return this.product.product_name || this.product.name || "";
+    },
+    imageSrc() {
+      if (Array.isArray(this.product.images) && this.product.images[0]) {
+        return this.product.images[0];
+      }
+      if (this.product.preview) {
+        return this.product.preview;
+      }
+      return "";
+    },
+  },
   methods: {
     ...mapActions([
       "removeProductFromCart",
@@ -36,10 +59,10 @@ export default {
     ]),
     getFormatNumber,
     handleIncrement() {
-      this.incrementCounter(this.product.product_id);
+      this.incrementCounter(this.productId);
     },
     handleDecrement() {
-      this.decrementCounter(this.product.product_id);
+      this.decrementCounter(this.productId);
     },
   },
   components: {

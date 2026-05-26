@@ -18,6 +18,7 @@ import { getUserMe } from "~/api/user";
 import { getMyOrder } from "~/api/order";
 import { useStore } from "vuex";
 import { loadCartFromLocalStorage } from "~/utils/cartLocalStorage";
+import { mapOrderItemToCartItem } from "~/utils/mapOrderItemToCartItem";
 
 const store = useStore();
 
@@ -34,9 +35,12 @@ onMounted(async () => {
 const loadUserOrderFromServer = async () => {
   try {
     const userOrder = await getMyOrder();
-    userOrder?.items.forEach((item) => {
-      store.commit("addProductToCart", item);
-    });
+    if (userOrder?.items?.length) {
+      store.commit(
+        "updateCart",
+        userOrder.items.map(mapOrderItemToCartItem)
+      );
+    }
     if (userOrder) {
       store.commit("setOrderId", userOrder.id);
     }
