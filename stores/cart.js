@@ -1,15 +1,15 @@
-import { createOrder, deleteOrder, updateOrder } from "~/api/order";
+import { createCart, clearCart as clearCartApi, updateCart } from "~/api/cart";
 import { saveCartToLocalStorage } from "~/utils/cartLocalStorage";
 
 const initialStore = [];
 
 export default {
-  namespaced: false,
+  namespaced: true,
   state() {
     return {
       products: initialStore,
-      orderId: null,
-      orderDebounceTimer: null,
+      cartId: null,
+      cartSyncTimer: null,
       emptyCartTimer: null,
       cartStatus: "loading",
     };
@@ -41,19 +41,19 @@ export default {
   actions: {
     addProductToCart({ commit, dispatch }, product) {
       commit("addProductToCart", product);
-      dispatch("syncOrderWithServer");
-      dispatch("cancelOrderDeletion");
+      dispatch("syncCartWithServer");
+      dispatch("cancelCartClear");
     },
     removeProductFromCart({ commit, dispatch }, productId) {
       commit("removeProductFromCart", productId);
-      dispatch("syncOrderWithServer");
+      dispatch("syncCartWithServer");
     },
-    async syncOrderWithServer({ state, commit, dispatch, rootGetters }) {
-      if (state.orderDebounceTimer) {
-        clearTimeout(state.orderDebounceTimer);
+    async syncCartWithServer({ state, commit, dispatch, rootGetters }) {
+      if (state.cartSyncTimer) {
+        clearTimeout(state.cartSyncTimer);
       }
 
-      state.orderDebounceTimer = setTimeout(async () => {
+      state.cartSyncTimer = setTimeout(async () => {
         try {
           const user = rootGetters.user;
 
@@ -68,40 +68,40 @@ export default {
             price: item.product.price,
           }));
 
-          if (state.orderId) {
-            await updateOrder(state.orderId, { items });
+          if (state.cartId) {
+            await updateCart(state.cartId, { items });
           } else {
-            const order = await createOrder({ items });
-            commit("setOrderId", order.id);
+            const cart = await createCart({ items });
+            commit("setCartId", cart.id);
           }
 
-          if (state.products.length === 0 && state.orderId) {
-            dispatch("scheduleOrderDeletion");
+          if (state.products.length === 0 && state.cartId) {
+            dispatch("scheduleCartClear");
           } else {
-            dispatch("cancelOrderDeletion");
+            dispatch("cancelCartClear");
           }
         } catch (error) {
-          console.error("Ошибка синхронизации заказа:", error);
+          console.error("Ошибка синхронизации корзины:", error);
         }
       }, 1000);
     },
-    scheduleOrderDeletion({ state, commit }) {
+    scheduleCartClear({ state, commit }) {
       if (state.emptyCartTimer) {
         clearTimeout(state.emptyCartTimer);
       }
 
       state.emptyCartTimer = setTimeout(async () => {
-        if (state.orderId && state.products.length === 0) {
+        if (state.cartId && state.products.length === 0) {
           try {
-            await deleteOrder(state.orderId);
-            commit("setOrderId", null);
+            await clearCartApi();
+            commit("setCartId", null);
           } catch (error) {
-            console.error("Ошибка удаления заказа:", error);
+            console.error("Ошибка очистки корзины:", error);
           }
         }
       }, 10000);
     },
-    cancelOrderDeletion({ state }) {
+    cancelCartClear({ state }) {
       if (state.emptyCartTimer) {
         clearTimeout(state.emptyCartTimer);
         state.emptyCartTimer = null;
@@ -153,7 +153,7 @@ export default {
     },
     async clearCart(state) {
       state.products = [];
-      await deleteOrder();
+      await clearCartApi();
     },
     incrementCounter(state, productId) {
       state.products.forEach((item) => {
@@ -165,8 +165,8 @@ export default {
         if (item.product.id === productId && item.count > 0) item.count -= 1;
       });
     },
-    setOrderId(state, orderId) {
-      state.orderId = orderId;
+    setCartId(state, cartId) {
+      state.cartId = cartId;
     },
     setCartStatus(state, status) {
       state.cartStatus = status;

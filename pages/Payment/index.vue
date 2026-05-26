@@ -3,7 +3,7 @@
     <div class="payment-container">
       <h1 class="payment-title">Оплата заказа</h1>
 
-      <div v-if="!paymentUrl" class="order-summary">
+      <div v-if="!paymentUrl" class="cart-summary">
         <div class="summary-item">
           <span class="label">Сумма заказа:</span>
           <span class="value">{{ getFormatNumber(cartStats.cost) }} ₽</span>
@@ -49,9 +49,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["cartStats", "allCart"]),
-    ...mapState({
-      orderId: (state) => state.orderId,
+    ...mapGetters("cart", ["cartStats", "allCart"]),
+    ...mapState("cart", {
+      cartId: (state) => state.cartId,
     }),
   },
   methods: {
@@ -65,8 +65,8 @@ export default {
           amount: this.cartStats.cost,
           description: `Оплата заказа`,
         };
-        if (this.orderId) {
-          paymentData.orderId = this.orderId;
+        if (this.cartId) {
+          paymentData.cartId = this.cartId;
         } else {
           paymentData.items = this.allCart.map((item) => ({
             product_id: item.product.id,
@@ -121,7 +121,7 @@ export default {
   text-align: center;
 }
 
-.order-summary {
+.cart-summary {
   max-width: 500px;
   margin: 0 auto;
   padding: 30px;
@@ -209,7 +209,7 @@ export default {
     font-size: 24px;
   }
 
-  .order-summary {
+  .cart-summary {
     padding: 20px;
   }
 

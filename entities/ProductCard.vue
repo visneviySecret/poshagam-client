@@ -50,7 +50,7 @@ const cachedGifUrl = ref<string | null>(null);
 const cachedImageUrl = ref<string | null>(null);
 
 const storedProduct = computed(() => {
-  return store.getters.allCart.find(
+  return store.getters["cart/allCart"].find(
     (item: { product: Product }) => item.product.id === props.product.id
   );
 });
@@ -61,9 +61,9 @@ const isInCart = computed(
 
 const handleAddProductToCart = () => {
   if (!isInCart.value) {
-    store.dispatch("addProductToCart", props.product);
+    store.dispatch("cart/addProductToCart", props.product);
   } else {
-    store.dispatch("removeProductFromCart", props.product.id);
+    store.dispatch("cart/removeProductFromCart", props.product.id);
   }
 };
 

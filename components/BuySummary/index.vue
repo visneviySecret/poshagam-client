@@ -27,7 +27,7 @@ export default {
   props: ["product", "count"],
 
   computed: {
-    ...mapGetters(["cartStats"]),
+    ...mapGetters("cart", ["cartStats"]),
   },
   components: {
     SummaryButtons,

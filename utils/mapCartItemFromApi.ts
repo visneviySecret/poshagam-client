@@ -1,16 +1,4 @@
-type OrderItemFromApi = {
-  id?: number;
-  product_id?: number;
-  quantity?: number;
-  count?: number;
-  price?: number | string;
-  product_name?: string;
-  name?: string;
-  product_images?: string;
-  images?: string[];
-};
-
-export function mapOrderItemToCartItem(item: OrderItemFromApi) {
+export function mapCartItemFromApi(item: CartItemFromApi) {
   const productId = item.product_id ?? item.id;
   let images: string[] = [];
 

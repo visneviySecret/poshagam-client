@@ -21,7 +21,7 @@ import { getEnding } from "@/utils/getEnding";
 import { getFormatNumber } from "@/utils/getFormatNumber";
 export default {
   computed: {
-    ...mapGetters(["cartStats", "cartStatus"]),
+    ...mapGetters("cart", ["cartStats", "cartStatus"]),
     isLoaded() {
       return this.cartStatus === "loaded";
     },

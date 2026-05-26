@@ -1,6 +1,8 @@
 <template>
   <div>
-    <Button :onClick="makeOrder" :disabled="isCartEmpty">Оформить заказ</Button>
+    <Button :onClick="goToPayment" :disabled="isCartEmpty"
+      >Оформить заказ</Button
+    >
   </div>
 </template>
 
@@ -12,10 +14,10 @@ export default {
     Button,
   },
   computed: {
-    ...mapGetters(["allCart", "isCartEmpty"]),
+    ...mapGetters("cart", ["allCart", "isCartEmpty"]),
   },
   methods: {
-    makeOrder() {
+    goToPayment() {
       this.$router.push("/payment");
     },
   },

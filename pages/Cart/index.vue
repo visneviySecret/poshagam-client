@@ -32,10 +32,10 @@ import { getEnding } from "@/utils/getEnding";
 
 export default {
   methods: {
-    ...mapActions(["clearCart"]),
+    ...mapActions("cart", ["clearCart"]),
   },
   computed: {
-    ...mapGetters(["allCart", "cartStats"]),
+    ...mapGetters("cart", ["allCart", "cartStats"]),
     ending() {
       return getEnding(this.cartStats.count);
     },

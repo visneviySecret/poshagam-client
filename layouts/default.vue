@@ -15,49 +15,49 @@
 
 <script setup>
 import { getUserMe } from "~/api/user";
-import { getMyOrder } from "~/api/order";
+import { getMyCart } from "~/api/cart";
 import { useStore } from "vuex";
-import { loadCartFromLocalStorage } from "~/utils/cartLocalStorage";
-import { mapOrderItemToCartItem } from "~/utils/mapOrderItemToCartItem";
+import { loadCartFromLocalStorage as readStoredCart } from "~/utils/cartLocalStorage";
+import { mapCartItemFromApi } from "~/utils/mapCartItemFromApi";
 
 const store = useStore();
+
+const loadCartFromServer = async () => {
+  try {
+    const serverCart = await getMyCart();
+    if (serverCart?.items?.length) {
+      store.commit(
+        "cart/updateCart",
+        serverCart.items.map(mapCartItemFromApi)
+      );
+    }
+    if (serverCart) {
+      store.commit("cart/setCartId", serverCart.id);
+    }
+  } catch (error) {
+    console.error("Ошибка загрузки корзины:", error);
+  } finally {
+    store.commit("cart/setCartStatus", "loaded");
+  }
+};
+
+const hydrateCartFromStorage = async () => {
+  const savedCart = readStoredCart();
+  if (savedCart && savedCart.length > 0) {
+    store.commit("cart/updateCart", savedCart);
+  }
+  store.commit("cart/setCartStatus", "loaded");
+};
 
 onMounted(async () => {
   try {
     const userData = await getUserMe();
     store.dispatch("setUser", userData);
-    await loadUserOrderFromServer();
+    await loadCartFromServer();
   } catch {
-    await loadUserOrderFromLocalStorage();
+    await hydrateCartFromStorage();
   }
 });
-
-const loadUserOrderFromServer = async () => {
-  try {
-    const userOrder = await getMyOrder();
-    if (userOrder?.items?.length) {
-      store.commit(
-        "updateCart",
-        userOrder.items.map(mapOrderItemToCartItem)
-      );
-    }
-    if (userOrder) {
-      store.commit("setOrderId", userOrder.id);
-    }
-  } catch (error) {
-    console.error("Ошибка загрузки пользователя:", error);
-  } finally {
-    store.commit("setCartStatus", "loaded");
-  }
-};
-
-const loadUserOrderFromLocalStorage = async () => {
-  const savedCart = loadCartFromLocalStorage();
-  if (savedCart && savedCart.length > 0) {
-    store.commit("updateCart", savedCart);
-  }
-  store.commit("setCartStatus", "loaded");
-};
 </script>
 
 <style lang="scss" scoped>
