@@ -116,6 +116,7 @@ const loadProduct = async () => {
     price.value = productData.price;
     imagePreviews.value = productData.images || [];
     categoryId.value = (productData as any).category_id ?? categoryId.value;
+    pdfPreview.value = [productData.instruction];
     if (productData.preview) {
       gifPreview.value = [productData.preview];
     }

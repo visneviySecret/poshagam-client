@@ -5,6 +5,7 @@ interface Product {
   name: string;
   preview: string;
   price: number;
+  instruction: string;
 }
 
 interface CreateProductPayload extends Omit<Product, "id" | "photo"> {
