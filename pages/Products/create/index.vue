@@ -9,6 +9,14 @@
         <input v-model="name" type="text" required />
       </label>
       <label class="field">
+        <span>Категория</span>
+        <select v-model.number="categoryId" required>
+          <option v-for="c in categories" :key="c.id" :value="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+      </label>
+      <label class="field">
         <span>Изображения</span>
         <DropZoneImage
           v-model:previews="imagePreviews"
@@ -56,6 +64,7 @@
 import DropZoneImage from "~/entities/DropZoneImage.vue";
 import DropZoneFile from "~/entities/DropZoneFile.vue";
 import { createProduct } from "~/api/product";
+import { getCategories, type Category } from "~/api/category";
 import dataURLtoBlob from "~/utils/dataURLtoBlob";
 
 interface FilePreview {
@@ -66,6 +75,8 @@ interface FilePreview {
 const name = ref("");
 const description = ref("");
 const price = ref<number | null>(null);
+const categories = ref<Category[]>([]);
+const categoryId = ref<number | null>(null);
 const imagePreviews = ref<(string | FilePreview)[]>([]);
 const gifPreview = ref<(string | FilePreview)[]>([]);
 const pdfPreview = ref<(string | FilePreview)[]>([]);
@@ -78,6 +89,7 @@ const getDataUrl = (item: string | FilePreview): string => {
 
 const handleSubmit = async () => {
   if (price.value === null) return;
+  if (categoryId.value === null) return;
   try {
     loading.value = true;
     error.value = "";
@@ -85,7 +97,7 @@ const handleSubmit = async () => {
     formData.append("name", name.value);
     formData.append("description", description.value);
     formData.append("price", price.value.toString());
-    formData.append("category", "1");
+    formData.append("category", categoryId.value.toString());
 
     imagePreviews.value.forEach((image) => {
       const blob = dataURLtoBlob(getDataUrl(image));
@@ -106,6 +118,7 @@ const handleSubmit = async () => {
     name.value = "";
     description.value = "";
     price.value = null;
+    categoryId.value = categories.value[0]?.id ?? null;
     imagePreviews.value = [];
     gifPreview.value = [];
     pdfPreview.value = [];
@@ -116,6 +129,21 @@ const handleSubmit = async () => {
     loading.value = false;
   }
 };
+
+const loadCategories = async () => {
+  try {
+    categories.value = await getCategories();
+    if (categoryId.value === null) {
+      categoryId.value = categories.value[0]?.id ?? null;
+    }
+  } catch (e) {
+    error.value = (e as Error).message;
+  }
+};
+
+onMounted(() => {
+  loadCategories();
+});
 </script>
 
 <style scoped lang="scss">
@@ -150,6 +178,7 @@ h1 {
   color: #6b7280;
 }
 input,
+select,
 textarea {
   padding: 10px 12px;
   border-radius: 10px;

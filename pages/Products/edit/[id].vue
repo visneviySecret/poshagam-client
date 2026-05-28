@@ -18,6 +18,14 @@
         <input v-model="name" type="text" required />
       </label>
       <label class="field">
+        <span>Категория</span>
+        <select v-model.number="categoryId" required>
+          <option v-for="c in categories" :key="c.id" :value="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+      </label>
+      <label class="field">
         <span>Изображения</span>
         <DropZoneImage
           v-model:previews="imagePreviews"
@@ -65,6 +73,7 @@
 import DropZoneImage from "~/entities/DropZoneImage.vue";
 import DropZoneFile from "~/entities/DropZoneFile.vue";
 import { getProductForEdit, updateProduct } from "~/api/product";
+import { getCategories, type Category } from "~/api/category";
 import dataURLtoBlob from "~/utils/dataURLtoBlob";
 
 interface FilePreview {
@@ -78,6 +87,8 @@ const productId = computed(() => Number(route.params.id));
 const name = ref("");
 const description = ref("");
 const price = ref<number | null>(null);
+const categories = ref<Category[]>([]);
+const categoryId = ref<number | null>(null);
 const imagePreviews = ref<(string | FilePreview)[]>([]);
 const gifPreview = ref<(string | FilePreview)[]>([]);
 const pdfPreview = ref<(string | FilePreview)[]>([]);
@@ -104,6 +115,7 @@ const loadProduct = async () => {
     description.value = productData.description;
     price.value = productData.price;
     imagePreviews.value = productData.images || [];
+    categoryId.value = (productData as any).category_id ?? categoryId.value;
     if (productData.preview) {
       gifPreview.value = [productData.preview];
     }
@@ -116,6 +128,7 @@ const loadProduct = async () => {
 
 const handleSubmit = async () => {
   if (price.value === null) return;
+  if (categoryId.value === null) return;
   try {
     loading.value = true;
     submitError.value = "";
@@ -123,7 +136,7 @@ const handleSubmit = async () => {
     formData.append("name", name.value);
     formData.append("description", description.value);
     formData.append("price", price.value.toString());
-    formData.append("category", "1");
+    formData.append("category", categoryId.value.toString());
 
     imagePreviews.value.forEach((image) => {
       if (typeof image === "string") {
@@ -162,7 +175,19 @@ const handleSubmit = async () => {
 };
 
 onMounted(() => {
-  loadProduct();
+  getCategories()
+    .then((data) => {
+      categories.value = data;
+      if (categoryId.value === null) {
+        categoryId.value = categories.value[0]?.id ?? null;
+      }
+    })
+    .catch((e) => {
+      submitError.value = (e as Error).message;
+    })
+    .finally(() => {
+      loadProduct();
+    });
 });
 </script>
 
@@ -220,6 +245,7 @@ h1 {
   color: #6b7280;
 }
 input,
+select,
 textarea {
   padding: 10px 12px;
   border-radius: 10px;
