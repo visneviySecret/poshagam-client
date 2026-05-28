@@ -39,11 +39,12 @@ export default {
 <style lang="scss" scoped>
 div {
   display: flex;
-  gap: 10px;
+  gap: 16px;
 }
 a {
   color: #797b86;
   text-decoration: none;
+  min-width: fit-content;
   &:hover {
     opacity: 0.7;
   }
