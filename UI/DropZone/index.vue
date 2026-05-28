@@ -14,8 +14,9 @@
       @change="handleFileChange"
       :multiple="multiple"
     />
-    <slot v-if="!previews.length" name="placeholder">
-      <p>{{ placeholderText }}</p>
+    <slot v-if="!previews.length" name="placeholder" :error="errorMessage">
+      <p v-if="errorMessage" class="dropzone__error">{{ errorMessage }}</p>
+      <p v-else>{{ placeholderText }}</p>
     </slot>
     <slot
       v-else
@@ -47,10 +48,16 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: "update:previews", value: (string | FilePreview)[]): void;
+  (e: "error", message: string): void;
 }>();
 
 const isDragActive = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
+const errorMessage = ref("");
+
+const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024;
+const formatMb = (bytes: number) =>
+  `${Math.round((bytes / (1024 * 1024)) * 10) / 10}MB`;
 
 const readFileAsDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
@@ -75,6 +82,18 @@ const isFileAccepted = (file: File): boolean => {
 };
 
 const addFiles = async (files: File[]) => {
+  errorMessage.value = "";
+  const tooLarge = files.find((f) => f.size > MAX_FILE_SIZE_BYTES);
+  if (tooLarge) {
+    const msg = `Файл слишком большой: ${tooLarge.name}. Максимум ${formatMb(
+      MAX_FILE_SIZE_BYTES
+    )}`;
+    errorMessage.value = msg;
+    emit("error", msg);
+    if (fileInput.value) fileInput.value.value = "";
+    return;
+  }
+
   const acceptedFiles = files.filter((file) => isFileAccepted(file));
   if (!acceptedFiles.length) return;
 
@@ -140,5 +159,9 @@ const removePreview = (index: number) => {
 }
 .dropzone__input {
   display: none;
+}
+.dropzone__error {
+  color: #dc2626;
+  font-weight: 500;
 }
 </style>
