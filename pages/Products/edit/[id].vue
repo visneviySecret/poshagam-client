@@ -26,7 +26,7 @@
         />
       </label>
       <label class="field">
-        <span>Цена</span>
+        <span>Цена, ₽</span>
         <input
           v-model.number="price"
           type="number"
