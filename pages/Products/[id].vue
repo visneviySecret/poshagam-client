@@ -1,51 +1,49 @@
 <template>
-  <div class="page">
-    <div v-if="loading" class="loading-message">
-      <p>Загрузка...</p>
+  <div v-if="loading" class="loading-message">
+    <p>Загрузка...</p>
+  </div>
+
+  <div v-else-if="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div v-else-if="product" class="product">
+    <div class="media">
+      <img :src="activeImage" :alt="product.name" class="image" />
+
+      <div v-if="product.images?.length" class="thumbs">
+        <button
+          v-for="(img, idx) in product.images"
+          :key="idx"
+          type="button"
+          class="thumb"
+          :class="{ 'thumb--active': img === activeImage }"
+          @click="activeImage = img"
+        >
+          <img :src="img" :alt="product.name" />
+        </button>
+      </div>
     </div>
 
-    <div v-else-if="error" class="error-message">
-      <p>{{ error }}</p>
-    </div>
-
-    <div v-else-if="product" class="product">
-      <div class="media">
-        <img :src="activeImage" :alt="product.name" class="image" />
-
-        <div v-if="product.images?.length" class="thumbs">
-          <button
-            v-for="(img, idx) in product.images"
-            :key="idx"
-            type="button"
-            class="thumb"
-            :class="{ 'thumb--active': img === activeImage }"
-            @click="activeImage = img"
-          >
-            <img :src="img" :alt="product.name" />
-          </button>
-        </div>
+    <div class="info">
+      <h1 class="title">{{ product.name }}</h1>
+      <div class="price">
+        <span class="price__value">{{ formattedPrice }}</span>
+        <span class="price__currency">₽</span>
       </div>
 
-      <div class="info">
-        <h1 class="title">{{ product.name }}</h1>
-        <div class="price">
-          <span class="price__value">{{ formattedPrice }}</span>
-          <span class="price__currency">₽</span>
-        </div>
+      <button
+        type="button"
+        class="button"
+        :class="{ 'button--in-cart': isInCart }"
+        @click="toggleCart"
+      >
+        {{ isInCart ? "В корзине" : "В корзину" }}
+      </button>
 
-        <button
-          type="button"
-          class="button"
-          :class="{ 'button--in-cart': isInCart }"
-          @click="toggleCart"
-        >
-          {{ isInCart ? "В корзине" : "В корзину" }}
-        </button>
-
-        <div class="desc">
-          <h3>Описание</h3>
-          <p>{{ product.description }}</p>
-        </div>
+      <div class="desc">
+        <h3>Описание</h3>
+        <p>{{ product.description }}</p>
       </div>
     </div>
   </div>
@@ -114,19 +112,18 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.page {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
 .product {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  display: flex;
+  justify-content: space-between;
   gap: 28px;
+
+  @media (max-width: 700px) {
+    flex-direction: column;
+  }
 }
 
 .media {
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -252,4 +249,3 @@ watch(
   }
 }
 </style>
-
