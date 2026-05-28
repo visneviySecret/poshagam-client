@@ -1,15 +1,20 @@
 <template>
   <div class="product-card">
-    <div
-      class="product-image-wrap"
+    <NuxtLink
+      class="product-link"
+      :to="`/products/${product.id}`"
       @mouseenter="isHovered = true"
       @mouseleave="isHovered = false"
     >
-      <img :src="currentImage" :alt="product.name" class="product-image" />
-    </div>
+      <div class="product-image-wrap">
+        <img :src="currentImage" :alt="product.name" class="product-image" />
+      </div>
+    </NuxtLink>
 
     <div class="product-body">
-      <h3 class="product-title">{{ product.name }}</h3>
+      <NuxtLink class="title-link" :to="`/products/${product.id}`">
+        <h3 class="product-title">{{ product.name }}</h3>
+      </NuxtLink>
 
       <p class="product-description">
         {{ product.description }}
@@ -106,6 +111,13 @@ watch(isHovered, async (hovered) => {
 </script>
 
 <style scoped lang="scss">
+.product-link,
+.title-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .product-card {
   display: flex;
   flex-direction: column;

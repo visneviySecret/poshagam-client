@@ -25,6 +25,11 @@ async function getProductForEdit(productId: number): Promise<Product> {
   return response.data;
 }
 
+async function getPublicProduct(productId: number): Promise<Product> {
+  const response = await apiClient.get(`/products/${productId}`);
+  return response.data;
+}
+
 async function updateProduct(productId: number, payload: CreateProductPayload) {
   const response = await apiClient.patch(`/products/${productId}`, payload);
   return response.data;
@@ -36,5 +41,6 @@ export {
   getOwnerProducts,
   deleteProduct,
   getProductForEdit,
+  getPublicProduct,
   updateProduct,
 };
